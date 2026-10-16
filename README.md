@@ -1,19 +1,21 @@
 # Sthree Vastras
 
-A responsive static storefront preview designed for GitHub Pages. It includes on-device shopper accounts, seller listing creation and deletion, browse/search/category views, cart, settings, and clear payment status messaging.
+A responsive storefront preview published on GitHub Pages.
 
-## Publish with GitHub Pages
+## Storefront
 
-1. Create a GitHub repository and add `index.html`, `styles.css`, `app.js`, and this README.
-2. In repository **Settings → Pages**, choose **Deploy from a branch**, select `main` and `/ (root)`, then save.
-3. GitHub Pages will publish the static files. No build step or paid service is required.
+[Open the shop](https://anmith2016-create.github.io/Sthree_Vastras/)
 
-## Important product limits
+Shopper accounts, carts, settings, and seller listings are stored in the current browser only. Listings do not sync to other shoppers or devices. No email verification is required.
 
-GitHub Pages does not provide a database, secure authentication, shared storage, or payment processing. Accounts, carts, preferences, and seller listings are stored in the current browser only. A listing is not shared with other people or devices. Account passwords are hashed locally, but this is not secure online authentication. The app does not accept, hold, or route money, and checkout is intentionally disabled. No email verification or payment details are collected.
+## Hosted admin demo
 
-Shared seller listings and real transactions require a backend, secure authentication, shared database/storage, and payment provider. Those services are outside this GitHub-only static version.
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/anmith2016-create/Sthree_Vastras)
 
-## Local admin and delivery prototype
+The admin and delivery prototype can run as a free Node.js demo on Render. On the setup page, choose a demo admin email and password when asked for `DEMO_ADMIN_EMAIL` and `DEMO_ADMIN_PASSWORD`. Use a new demo password, at least 12 characters long; do not reuse an important password. The prototype does not send email verification.
 
-A separate Node.js prototype is available in [`admin-prototype`](admin-prototype/README.md). It demonstrates server-side password hashing, role-checked account controls, delivery OTP keypad confirmation, and the 90/10 demo payout illustration. Run it locally with Node.js; GitHub Pages cannot run the server. It sends no OTPs and makes no transfers.
+Free Render services sleep after 15 minutes without requests and may restart. Its accounts, sessions, demo deliveries, and changes are held in memory and can reset after sleep/restart/redeploy. This is a demonstration, not production account storage.
+
+## Payments and shared listings
+
+Payments remain disabled: no processor or wallet is connected, and the app does not collect, hold, or transfer money. The hosted admin demo does not manage the shop's browser-local seller listings. Real payments and cross-device/shared listings require further backend, storage, and payment-provider work.
