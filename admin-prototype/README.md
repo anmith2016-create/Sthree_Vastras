@@ -1,12 +1,21 @@
-# Sthree Vastras · Payout Account Setup
+# Sthree Vastras · Admin & Delivery Demo
 
-Node.js backend prototype for account login, delivery confirmation, admin controls, and payout account onboarding.
+This Node.js prototype provides demo login, demo employee accounts, example delivery records, simulated OTP confirmation, and administrator access controls. It does not manage storefront clothing listings.
+
+## Deploy a free hosted demo
+
+Use the [Deploy to Render button](https://render.com/deploy?repo=https://github.com/anmith2016-create/Sthree_Vastras). Render reads the repository's `render.yaml`. During setup, provide:
+
+- `DEMO_ADMIN_EMAIL`: the email for the demo administrator account.
+- `DEMO_ADMIN_PASSWORD`: a new demo-only password, at least 12 characters long.
+
+Do not reuse an important password. The demo itself does not send email or require shopper email verification. When deployment finishes, Render shows the service URL. The free service can sleep after 15 minutes of inactivity and may restart. Accounts, sessions, demo deliveries, and changes are in memory and may reset after sleep, restart, or redeploy.
 
 ## Run locally
 
 Requires Node.js 20 or newer. No external packages are used.
 
-The application starts with demo mode **off**. To run the local preview with example delivery data and simulated OTPs, explicitly enable demo mode before starting:
+In PowerShell:
 
 ```powershell
 $env:DEMO_MODE = 'true'
@@ -15,21 +24,10 @@ $env:DEMO_ADMIN_PASSWORD = 'use-a-new-local-demo-password'
 node server.js
 ```
 
-Open `http://127.0.0.1:3000`. New demo accounts get employee access; the administrator can review and suspend them.
+Open `http://127.0.0.1:3000`. New demo accounts get employee access; the administrator can review and suspend them. OTPs are simulated and shown in the demo. No messages are sent.
 
-For production, use `NODE_ENV=production` with `ADMIN_EMAIL` and `ADMIN_PASSWORD` stored in a server-side secret manager. Production never reads `DEMO_*` credentials. Replace any password that may be a real credential before deployment.
+## Payments and production limits
 
-## Bank account setup
+Real payments are disabled. No wallet, payment processor, payout account, or transfer is connected. The example payout split is display-only. The demo server does not connect to the shop's browser-local listings.
 
-The payout screen offers both Savings and Current account types. The app does not ask for account numbers, IFSC codes, or bank credentials. Once a payment provider is selected and configured, the “Continue to secure setup” action should open that provider's hosted onboarding page so the provider collects and verifies bank details.
-
-That provider integration is not connected yet. The button remains disabled, and no bank data is transmitted or stored. Production API routes return a configuration error instead of returning fake deliveries, simulated OTPs, or demo admin actions.
-
-## Live service requirements
-
-This repository is source code, not a live service. GitHub Pages cannot run the Node server. A production deployment still needs a hosted Node service, persistent identity/data storage, an OTP delivery provider, a selected and activated payment provider, verified webhooks, and business approval for any payout split. No real transfers are implemented.
-
-The 90% administrator / 10% employee split remains an example only in explicitly enabled local demo mode. Production shows no split until provider and business rules are configured.
-
-Passwords use Node's scrypt hashing. Session cookies are HttpOnly and SameSite=Strict; a remote deployment also requires HTTPS. Accounts and sessions in the local prototype are held in memory and reset when the server stops.
-
+Free hosting is intended for testing and preview, not production commerce. Secure production accounts and shared listings require persistent storage and further backend work. Real payments require an activated provider, server-side integration, verified webhooks, and business approval. No card, bank, or UPI data is collected here.
