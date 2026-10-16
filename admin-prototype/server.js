@@ -5,20 +5,21 @@ const path = require('node:path');
 
 const PORT = Number(process.env.PORT || 3000);
 const isProduction = process.env.NODE_ENV === 'production';
+const isDemo = process.env.DEMO_MODE === 'true' && !isProduction;
 const users = new Map();
 const sessions = new Map();
 const loginAttempts = new Map();
-const deliveries = [
+const deliveries = isDemo ? [
   { id: 'd1', name: 'Ananya Rao', email: 'ananya@example.test', item: 'Handwoven cotton kurta', amount: 1499, state: 'Ready for pickup' },
   { id: 'd2', name: 'Mira Shah', email: 'mira@example.test', item: 'Indigo wrap dress', amount: 2290, state: 'Out for delivery' },
   { id: 'd3', name: 'Isha Nair', email: 'isha@example.test', item: 'Linen co-ord set', amount: 3190, state: 'Delivery scheduled' },
-];
+] : [];
 const otpChallenges = new Map();
-const adminEmail = (process.env.DEMO_ADMIN_EMAIL || '').trim().toLowerCase();
-const adminPassword = process.env.DEMO_ADMIN_PASSWORD || '';
+const adminEmail = String(isProduction ? process.env.ADMIN_EMAIL || '' : isDemo ? process.env.DEMO_ADMIN_EMAIL || '' : '').trim().toLowerCase();
+const adminPassword = String(isProduction ? process.env.ADMIN_PASSWORD || '' : isDemo ? process.env.DEMO_ADMIN_PASSWORD || '' : '');
 const adminSalt = crypto.randomBytes(16);
 const adminHash = adminPassword ? hashPassword(adminPassword, adminSalt) : null;
-if (adminHash && adminEmail) users.set(adminEmail, { email: adminEmail, name: 'Demo administrator', role: 'admin', salt: adminSalt.toString('hex'), hash: adminHash.toString('hex'), banned: false });
+if (adminHash && adminEmail) users.set(adminEmail, { email: adminEmail, name: isDemo ? 'Demo administrator' : 'Administrator', role: 'admin', salt: adminSalt.toString('hex'), hash: adminHash.toString('hex'), banned: false });
 
 function hashPassword(password, salt) { return crypto.scryptSync(password, salt, 64); }
 function safeEqual(a, b) { return a.length === b.length && crypto.timingSafeEqual(a, b); }
@@ -30,13 +31,14 @@ function requireUser(req, res) { const u = sessionUser(req); if (!u) send(res, 4
 function requireAdmin(req, res) { const u = requireUser(req, res); if (u && u.role !== 'admin') { send(res, 403, { error: 'Administrator access required.' }); return null; } return u; }
 function publicUser(u) { return { email: u.email, name: u.name, role: u.role, banned: u.banned }; }
 function newSession(res, user) { const id = crypto.randomBytes(32).toString('base64url'); sessions.set(id, { email: user.email, createdAt: Date.now() }); res.setHeader('set-cookie', `sv_session=${encodeURIComponent(id)}; HttpOnly; SameSite=Strict; Path=/; Max-Age=28800${isProduction ? '; Secure' : ''}`); }
-const page = fs.readFileSync(path.join(__dirname, 'public', 'index.html'), 'utf8');
+const page = fs.readFileSync(path.join(__dirname, 'public', 'index.html'), 'utf8').replace('__MODE__', isDemo ? 'local-demo' : isProduction ? 'production' : 'unconfigured');
 
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, 'http://localhost');
   if (req.method === 'GET' && url.pathname === '/') return send(res, 200, page, 'text/html; charset=utf-8');
   if (req.method === 'GET' && url.pathname === '/health') return send(res, 200, { ok: true, mode: 'demo' });
   if (!url.pathname.startsWith('/api/')) return send(res, 404, { error: 'Not found.' });
+  if (!isDemo && ['/api/signup','/api/deliveries','/api/otp/start','/api/otp/verify','/api/admin/people','/api/admin/ban','/api/payout/last4'].includes(url.pathname)) return send(res, 503, { error: 'This service is not connected. Set up the production identity, delivery, storage, and payment provider before enabling it.' });
   if (['POST'].includes(req.method)) { const origin = req.headers.origin; if (origin && new URL(origin).host !== req.headers.host) return send(res, 403, { error: 'Request could not be verified.' }); }
   if (req.method === 'GET' && url.pathname === '/api/me') { const u = requireUser(req, res); if (u) return send(res, 200, { user: publicUser(u) }); return; }
   if (req.method === 'POST' && url.pathname === '/api/login') { const b = await json(req, res); if (!b) return; const email = String(b.email || '').trim().toLowerCase(), password = String(b.password || ''), now = Date.now(); const attempt = loginAttempts.get(email) || { count: 0, until: 0 }; if (attempt.until > now) return send(res, 429, { error: 'Too many attempts. Wait a minute and try again.' }); const u = users.get(email); const valid = u && safeEqual(hashPassword(password, Buffer.from(u.salt, 'hex')), Buffer.from(u.hash, 'hex')); if (!valid || u.banned) { attempt.count++; if (attempt.count >= 5) { attempt.count = 0; attempt.until = now + 60000; } loginAttempts.set(email, attempt); return send(res, 401, { error: 'Email or password is incorrect.' }); } loginAttempts.delete(email); newSession(res, u); return send(res, 200, { user: publicUser(u) }); }
@@ -50,5 +52,5 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'POST' && url.pathname === '/api/payout/last4') { if (!requireAdmin(req, res)) return; const b = await json(req, res); if (!b) return; if (!/^\d{4}$/.test(String(b.last4 || ''))) return send(res, 400, { error: 'Enter exactly four digits.' }); server.demoLast4 = String(b.last4); return send(res, 200, { last4: server.demoLast4 }); }
   return send(res, 404, { error: 'Not found.' });
 });
-server.listen(PORT, '127.0.0.1', () => { console.log(`Sthree Vastras demo running at http://127.0.0.1:${PORT}`); if (!adminHash || !adminEmail) console.log('No admin is seeded. Set DEMO_ADMIN_EMAIL and DEMO_ADMIN_PASSWORD before starting.'); });
+server.listen(PORT, '127.0.0.1', () => { console.log(`Sthree Vastras ${isProduction ? 'production' : isDemo ? 'local demo' : 'unconfigured'} server at http://127.0.0.1:${PORT}`); if (!adminHash || !adminEmail) console.log(isProduction ? 'No production administrator is configured.' : isDemo ? 'No local demo administrator is configured.' : 'Demo mode is off.'); });
 
