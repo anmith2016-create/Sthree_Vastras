@@ -1,29 +1,35 @@
-# Sthree Vastras · Admin & Delivery Prototype
+# Sthree Vastras · Payout Account Setup
 
-A local-only prototype for account login, delivery confirmation, admin account controls, and a clearly marked 90/10 payout illustration.
+Node.js backend prototype for account login, delivery confirmation, admin controls, and payout account onboarding.
 
 ## Run locally
 
-Requires Node.js 20 or newer. The app uses only built-in Node modules.
+Requires Node.js 20 or newer. No external packages are used.
 
-Set `DEMO_ADMIN_EMAIL` and `DEMO_ADMIN_PASSWORD` in your local shell before starting the server. The admin password is hashed with Node's scrypt when the server starts; it is not stored in this repository. Do not reuse a real password. Use the credentials from the original request only for local demo/testing, and replace the password before any deployment if it is real.
-
-PowerShell example:
+The application starts with demo mode **off**. To run the local preview with example delivery data and simulated OTPs, explicitly enable demo mode before starting:
 
 ```powershell
+$env:DEMO_MODE = 'true'
 $env:DEMO_ADMIN_EMAIL = 'your-demo-admin@example.test'
 $env:DEMO_ADMIN_PASSWORD = 'use-a-new-local-demo-password'
 node server.js
 ```
 
-Open `http://127.0.0.1:3000`. New sign-ups receive the employee role. The administrator can inspect and suspend employee accounts. “Switch account” returns to the sign-in screen.
+Open `http://127.0.0.1:3000`. New demo accounts get employee access; the administrator can review and suspend them.
 
-## Prototype boundaries
+For production, use `NODE_ENV=production` with `ADMIN_EMAIL` and `ADMIN_PASSWORD` stored in a server-side secret manager. Production never reads `DEMO_*` credentials. Replace any password that may be a real credential before deployment.
 
-- No real OTP is sent. A randomly generated six-digit code is displayed only in local demo mode and expires after five minutes.
-- The 90% administrator / 10% employee allocation is a display-only demo rule. There are no payment-provider calls or money transfers.
-- No bank account number, routing code, or bank credential is collected. The payout screen can hold only four display digits in server memory.
-- User accounts, OTP challenges, sessions, and admin display settings are held in memory and disappear when the server stops. This is not production-ready shared storage or authentication.
-- Passwords for newly registered accounts use scrypt hashes. Session cookies are HttpOnly and SameSite=Strict. HTTPS is needed before any remote deployment.
-- Never publish real credentials, private keys, account numbers, or `.env` files. GitHub Pages cannot run this Node server; run it locally or deploy it to a suitable server after a full security review and proper identity, messaging, database, and payment-provider integrations.
+## Bank account setup
+
+The payout screen offers both Savings and Current account types. The app does not ask for account numbers, IFSC codes, or bank credentials. Once a payment provider is selected and configured, the “Continue to secure setup” action should open that provider's hosted onboarding page so the provider collects and verifies bank details.
+
+That provider integration is not connected yet. The button remains disabled, and no bank data is transmitted or stored. Production API routes return a configuration error instead of returning fake deliveries, simulated OTPs, or demo admin actions.
+
+## Live service requirements
+
+This repository is source code, not a live service. GitHub Pages cannot run the Node server. A production deployment still needs a hosted Node service, persistent identity/data storage, an OTP delivery provider, a selected and activated payment provider, verified webhooks, and business approval for any payout split. No real transfers are implemented.
+
+The 90% administrator / 10% employee split remains an example only in explicitly enabled local demo mode. Production shows no split until provider and business rules are configured.
+
+Passwords use Node's scrypt hashing. Session cookies are HttpOnly and SameSite=Strict; a remote deployment also requires HTTPS. Accounts and sessions in the local prototype are held in memory and reset when the server stops.
 
