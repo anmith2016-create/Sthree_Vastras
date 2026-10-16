@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f8f6f1">
+<title>Sthree Vastras · Choose UPI QR</title>
+<style>
+:root{--ink:#26231f;--muted:#827d74;--cream:#f8f6f1;--paper:#fffefa;--line:#eae6dd;--rose:#c87364;--green:#687558}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:15px/1.65 Arial,sans-serif;min-height:100vh;display:grid;place-items:center;padding:20px}
+main{width:min(650px,100%);background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:clamp(22px,5vw,42px);box-shadow:0 18px 60px #26231f0c}
+.brand{font:600 20px Georgia,serif}.brand span{display:inline-grid;place-items:center;width:36px;height:36px;border:1px solid;border-radius:50%;font-style:italic;margin-right:9px}
+.eyebrow{font-size:10px;letter-spacing:1.7px;color:var(--rose);font-weight:bold;margin-top:28px}
+h1{font:500 clamp(28px,7vw,40px)/1.1 Georgia,serif;margin:10px 0}
+p{color:var(--muted);font-size:13px}
+.note{margin:20px 0;padding:15px 17px;background:#f2ede3;border-radius:9px;font-size:12px;color:#625c52}
+.warning{border-left:3px solid var(--rose);background:#fcf5f1;padding:13px 15px;border-radius:5px;font-size:12px;color:#76534a}
+.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:22px 0}
+button{font:600 13px Arial,sans-serif;border:0;border-radius:7px;padding:13px 17px;cursor:pointer}
+.primary{background:var(--ink);color:white}.secondary{background:white;border:1px solid var(--line);color:var(--ink)}
+input[type=file]{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
+.preview{min-height:160px;border:1px dashed #d9d2c8;border-radius:10px;display:grid;place-items:center;padding:18px;text-align:center;color:var(--muted);font-size:12px}
+.preview img{max-width:min(100%,340px);max-height:360px;object-fit:contain;background:white;padding:10px;border:1px solid var(--line);border-radius:8px}
+.status{font-size:11px;color:var(--green);margin-top:10px}
+a{color:#8f5148}
+</style>
+</head>
+<body>
+<main>
+<div class="brand"><span>sv</span>Sthree Vastras</div>
+<div class="eyebrow">UPI QR SETUP</div>
+<h1>Choose your QR image</h1>
+<p>Open your device’s file manager or photo gallery and select the merchant UPI QR image.</p>
+<div class="note"><b>Preview only:</b> selecting an image here keeps it in this browser tab. It does not upload or publish the QR, collect a payment, or verify a transfer.</div>
+<div class="warning">A published QR can show payment details and let people send money to its recipient. Confirm the payee before adding it to the public app. Payments and the app wallet are not connected.</div>
+<div class="actions">
+<label for="qr-file"><button class="primary" type="button">Choose QR from gallery</button></label>
+<input id="qr-file" type="file" accept="image/png,image/jpeg,image/webp">
+<button class="secondary" id="clear" type="button">Clear preview</button>
+</div>
+<div class="preview" id="preview">No QR image selected yet.</div>
+<div class="status" id="status" aria-live="polite"></div>
+<p><a href="../../">Back to Sthree Vastras shop</a></p>
+</main>
+<script>
+const input=document.querySelector('#qr-file'),preview=document.querySelector('#preview'),status=document.querySelector('#status');
+let currentUrl='';
+input.addEventListener('change',()=>{
+  const file=input.files&&input.files[0];
+  if(!file)return;
+  if(!['image/png','image/jpeg','image/webp'].includes(file.type)){status.textContent='Please choose a PNG, JPG, or WebP image.';input.value='';return}
+  if(file.size>5*1024*1024){status.textContent='Please choose an image smaller than 5 MB.';input.value='';return}
+  if(currentUrl)URL.revokeObjectURL(currentUrl);
+  currentUrl=URL.createObjectURL(file);
+  const img=document.createElement('img');img.alt='Selected UPI QR image preview';img.src=currentUrl;
+  preview.replaceChildren(img);
+  status.textContent=file.name+' · preview on this device only';
+});
+document.querySelector('#clear').addEventListener('click',()=>{
+  if(currentUrl)URL.revokeObjectURL(currentUrl);
+  currentUrl='';input.value='';preview.textContent='No QR image selected yet.';status.textContent='';
+});
+</script>
+</body></html>
