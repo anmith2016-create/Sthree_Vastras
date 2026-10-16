@@ -13,3 +13,7 @@ A responsive static storefront preview designed for GitHub Pages. It includes on
 GitHub Pages does not provide a database, secure authentication, shared storage, or payment processing. Accounts, carts, preferences, and seller listings are stored in the current browser only. A listing is not shared with other people or devices. Account passwords are hashed locally, but this is not secure online authentication. The app does not accept, hold, or route money, and checkout is intentionally disabled. No email verification or payment details are collected.
 
 Shared seller listings and real transactions require a backend, secure authentication, shared database/storage, and payment provider. Those services are outside this GitHub-only static version.
+
+## Local admin and delivery prototype
+
+A separate Node.js prototype is available in [`admin-prototype`](admin-prototype/README.md). It demonstrates server-side password hashing, role-checked account controls, delivery OTP keypad confirmation, and the 90/10 demo payout illustration. Run it locally with Node.js; GitHub Pages cannot run the server. It sends no OTPs and makes no transfers.
