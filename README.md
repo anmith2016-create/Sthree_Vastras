@@ -8,14 +8,14 @@ A responsive storefront preview published on GitHub Pages.
 
 Shopper accounts, carts, settings, and seller listings are stored in the current browser only. Listings do not sync to other shoppers or devices. No email verification is required.
 
-## Hosted admin demo
+## Admin app
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/anmith2016-create/Sthree_Vastras)
+[Admin app source and setup](https://github.com/anmith2016-create/Sthree_Vastras/tree/main/admin-prototype)
 
-The admin and delivery prototype can run as a free Node.js demo on Render. On the setup page, choose a demo admin email and password when asked for `DEMO_ADMIN_EMAIL` and `DEMO_ADMIN_PASSWORD`. Use a new demo password, at least 12 characters long; do not reuse an important password. The prototype does not send email verification.
+The admin app has demo OTPs, sample deliveries, and open sign-up turned off. It seeds only the administrator account configured through the hosting provider's `ADMIN_EMAIL` and `ADMIN_PASSWORD` secrets. Never use a password from another account or commit secrets to GitHub.
 
-Free Render services sleep after 15 minutes without requests and may restart. Its accounts, sessions, demo deliveries, and changes are held in memory and can reset after sleep/restart/redeploy. This is a demonstration, not production account storage.
+Buyer accounts are not created in the admin app. They should be added only through a verified shopping-app purchase integration. That integration is not connected yet, so the admin buyer list is empty and delivery/OTP service endpoints remain disabled. Do not treat an unsigned browser checkout as proof of purchase.
 
-## Payments and shared listings
+## Payments and publishing
 
-Payments remain disabled: no processor or wallet is connected, and the app does not collect, hold, or transfer money. The hosted admin demo does not manage the shop's browser-local seller listings. Real payments and cross-device/shared listings require further backend, storage, and payment-provider work.
+The storefront is static. The Node.js admin app is configured for Render in [render.yaml](render.yaml). GitHub Pages cannot run its server. Payout onboarding and all money transfers are disabled until a payment provider is configured. No 90/10 split is shown as a live rule.
