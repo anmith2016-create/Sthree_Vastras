@@ -12,7 +12,7 @@ $env:ADMIN_PASSWORD = 'use-a-unique-password-of-at-least-12-characters'
 node server.js
 ```
 
-The admin password is hashed with scrypt at startup. Do not use a real credential from another service. The configured account is the only account this prototype seeds. There is no customer sign-up route.
+The admin password is hashed with scrypt at startup. Do not use a real credential from another service. The configured account is the only account this prototype seeds. There is no customer sign-up route. Existing Render setups may still use the older `DEMO_ADMIN_*` secret names for admin login only; these names no longer enable any demo data, OTP, or customer-account features.
 
 ## Buyer accounts and deliveries
 
