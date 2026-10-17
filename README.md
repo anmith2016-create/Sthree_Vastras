@@ -12,9 +12,9 @@ Shopper accounts, carts, settings, and seller listings are stored in the current
 
 [Admin app source and setup](https://github.com/anmith2016-create/Sthree_Vastras/tree/main/admin-prototype)
 
-The admin app has demo OTPs, sample deliveries, and open sign-up disabled. It seeds only the administrator account configured through the hosting provider's `ADMIN_EMAIL` and `ADMIN_PASSWORD` secrets. Never use a password from another account or commit secrets to GitHub.
+The admin app has administrator and employee accounts only. There is no shopper sign-up in the admin app. The administrator creates employee accounts from **People & access**; employees receive the employee role. Demo OTPs, sample deliveries, and open sign-up are disabled. The administrator account is configured through the hosting provider's `ADMIN_EMAIL` and `ADMIN_PASSWORD` secrets. Never use a password from another account or commit secrets to GitHub.
 
-The admin sign-in screen links shoppers to the storefront to create a shopper profile. Buyer records are not created in the admin app. They should be added only through a verified shopping-app purchase integration. That integration is not connected yet, so the admin buyer list is empty and delivery/OTP service endpoints remain disabled. Do not treat an unsigned browser checkout as proof of purchase.
+Shopper accounts belong to the storefront. They are not imported into the admin app, and the admin app does not create shopper accounts. Delivery, OTP, and purchase integration remain disabled until real services are configured.
 
 ## Payments and publishing
 
