@@ -42,5 +42,5 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'POST' && url.pathname === '/api/admin/ban') { if (!requireAdmin(req, res)) return; const b = await json(req, res); if (!b) return; const u = users.get(String(b.email || '').toLowerCase()); if (!u || u.role === 'admin') return send(res, 404, { error: 'Person not found.' }); u.banned = Boolean(b.banned); if (u.banned) for (const [id, s] of sessions) if (s.email === u.email) sessions.delete(id); return send(res, 200, { person: publicUser(u) }); }
   return send(res, 404, { error: 'Not found.' });
 });
-server.listen(PORT, '127.0.0.1', () => { console.log(`Sthree Vastras ${isProduction ? 'production' : 'unconfigured'} server at http://127.0.0.1:${PORT}`); if (!adminHash || !adminEmail) console.log('No administrator is configured. Set ADMIN_EMAIL and ADMIN_PASSWORD before starting.'); });
+server.listen(PORT, isProduction ? '0.0.0.0' : '127.0.0.1', () => { console.log(`Sthree Vastras ${isProduction ? 'production' : 'unconfigured'} server listening on port ${PORT}`); if (!adminHash || !adminEmail) console.log('No administrator is configured. Set ADMIN_EMAIL and ADMIN_PASSWORD before starting.'); });
 
