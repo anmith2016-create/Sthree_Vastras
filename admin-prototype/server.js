@@ -8,8 +8,10 @@ const isProduction = process.env.NODE_ENV === 'production';
 const users = new Map();
 const sessions = new Map();
 const loginAttempts = new Map();
-const adminEmail = String(process.env.ADMIN_EMAIL || '').trim().toLowerCase();
-const adminPassword = String(process.env.ADMIN_PASSWORD || '');
+// DEMO_ADMIN_* are accepted only as legacy admin-secret names for an existing
+// Render deployment; demo users, signup, delivery data, and OTPs stay disabled.
+const adminEmail = String(process.env.ADMIN_EMAIL || process.env.DEMO_ADMIN_EMAIL || '').trim().toLowerCase();
+const adminPassword = String(process.env.ADMIN_PASSWORD || process.env.DEMO_ADMIN_PASSWORD || '');
 const adminSalt = crypto.randomBytes(16);
 const adminHash = adminPassword ? hashPassword(adminPassword, adminSalt) : null;
 if (adminHash && adminEmail) users.set(adminEmail, { email: adminEmail, name: 'Administrator', role: 'admin', salt: adminSalt.toString('hex'), hash: adminHash.toString('hex'), banned: false });
