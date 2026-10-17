@@ -1,30 +1,24 @@
-# Sthree Vastras Admin
+# Sthree Vastras Staff App
 
-Admin and employee Node.js prototype. Demo OTP generation, demo deliveries, shopper account creation, and open sign-up are off. This app is for staff accounts only.
+Employee-only Node.js prototype. There is no administrator account or shopper account flow. Employees can create their own account from the sign-in screen.
 
 ## Run locally
 
-Requires Node.js 20 or newer. No external packages are used. Set an administrator credential in the local shell or a server-side secret manager, then start the app:
+Requires Node.js 20 or newer. No external packages are used.
 
 ```powershell
-$env:ADMIN_EMAIL = 'admin@example.com'
-$env:ADMIN_PASSWORD = 'use-a-unique-password-of-at-least-12-characters'
 node server.js
 ```
 
-The admin password is hashed with scrypt at startup. Do not use a real credential from another service. The configured account is the only account this prototype seeds. After signing in, an administrator can use **People & access → Add employee account** to create employees. Employees receive only the employee role. Existing Render setups may still use the older `DEMO_ADMIN_*` secret names for admin login only; these names no longer enable any demo data, OTP, or customer-account features.
+Employee passwords are hashed with scrypt. New accounts are held in server memory and reset when the service restarts. Add persistent storage and suitable account protections before relying on this app for real staff access.
 
-## Employee accounts, shoppers, and deliveries
+## Disabled features
 
-There are no fake accounts, sample deliveries, or simulated OTP codes. The administrator creates employee accounts in **People & access**; each new account receives the employee role. There is no shopper sign-up or shopper account creation in this admin app. Purchase, delivery, and OTP endpoints remain disabled.
+There are no demo accounts, sample deliveries, or simulated OTPs. Delivery, purchase sync, and OTP endpoints are disabled. The bank account screen does not collect bank details, connect to a payment provider, or make transfers.
 
-Any future shopper or purchase integration belongs in the shopping app and its backend. Delivery OTPs require a real messaging provider. Do not accept unsigned order details from a browser as proof of purchase.
-
-## Bank onboarding and transfers
-
-The screen offers Savings and Current account type selectors, but does not ask for account numbers, IFSC codes, or bank credentials. Provider-hosted onboarding is not connected; no bank data is transmitted or stored, and all transfers and allocation rules are disabled.
+Shopper accounts belong in the storefront. This staff app does not create shopper accounts.
 
 ## Deployment
 
-Employee accounts are held in server memory and reset when the service restarts; use persistent storage before relying on this for real staff access. GitHub Pages cannot run this Node server. Configure secrets only in the hosting provider's secret manager and require HTTPS.
+GitHub Pages cannot run this Node server. The app is deployed through the configured Render service. Do not commit passwords or other secrets to GitHub.
 
