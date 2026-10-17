@@ -7,13 +7,11 @@ services:
     buildCommand: echo "No dependencies to install"
     startCommand: node server.js
     healthCheckPath: /health
-    autoDeployTrigger: off
+    autoDeployTrigger: commit
     envVars:
       - key: NODE_ENV
         value: production
-      - key: DEMO_MODE
-        value: "true"
-      - key: DEMO_ADMIN_EMAIL
+      - key: ADMIN_EMAIL
         sync: false
-      - key: DEMO_ADMIN_PASSWORD
+      - key: ADMIN_PASSWORD
         sync: false
